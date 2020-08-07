@@ -22,6 +22,7 @@ public class QRView:NSObject,FlutterPlatformView {
     
     func isCameraAvailable(success: Bool) -> Void {
         if success {
+            self.channel.invokeMethod("Permission", arguments: false)
             do {
                 try scanner?.startScanning(resultBlock: { codes in
                     if let codes = codes {
@@ -35,7 +36,9 @@ public class QRView:NSObject,FlutterPlatformView {
                 NSLog("Unable to start scanning")
             }
         } else {
-            UIAlertView(title: "Scanning Unavailable", message: "This app does not have permission to access the camera", delegate: nil, cancelButtonTitle: nil, otherButtonTitles: "Ok").show()
+                self.channel.invokeMethod("Permission", arguments: false)
+
+//             UIAlertView(title: "Scanning Unavailable", message: "This app does not have permission to access the camera", delegate: nil, cancelButtonTitle: nil, otherButtonTitles: "Ok").show()
         }
     }
     
