@@ -47,6 +47,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
             override fun onActivityResumed(p0: Activity?) {
                 if (p0 == registrar.activity()) {
+                    channel.invokeMethod("Permission", hasCameraPermission());
                     barcodeView?.resume()
                 }
             }
@@ -141,6 +142,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
     private inner class CameraRequestPermissionsListener : PluginRegistry.RequestPermissionsResultListener {
         override fun onRequestPermissionsResult(id: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
             if (id == CAMERA_REQUEST_ID && grantResults[0] == PERMISSION_GRANTED) {
+                channel.invokeMethod("Permission", hasCameraPermission());
                 cameraPermissionContinuation?.run()
                 return true
             }

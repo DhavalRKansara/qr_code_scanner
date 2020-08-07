@@ -109,6 +109,10 @@ class QRViewController {
             if (call.arguments != null) {
               _scanUpdateController.sink.add(call.arguments.toString());
             }
+            break;
+          case 'Permission':
+            _scanUpdateController.sink.addError(call.arguments);
+            break;
         }
       },
     );
