@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-void main() => runApp(MaterialApp(home: QRViewExample()));
+void main() => runApp(MaterialApp(home: MyHome()));
+
+class MyHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: RaisedButton(
+          child: Text("QR VIEW"),
+          onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=> QRViewExample()));
+          },
+        ),
+      ),
+    );
+  }
+}
+
 
 const flashOn = 'FLASH ON';
 const flashOff = 'FLASH OFF';
@@ -23,6 +40,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   var cameraState = frontCamera;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  bool permissionGranted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +48,39 @@ class _QRViewExampleState extends State<QRViewExample> {
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 4,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                borderColor: Colors.red,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: 300,
-              ),
-            ),
-          ),
+              flex: 4,
+              child: Stack(
+                children: <Widget>[
+                  QRView(
+                    key: qrKey,
+                    onQRViewCreated: _onQRViewCreated,
+                    overlay: QrScannerOverlayShape(
+                      borderColor: Colors.red,
+                      borderRadius: 10,
+                      borderLength: 30,
+                      borderWidth: 10,
+                      cutOutSize: 300,
+                    ),
+                  ),
+                  permissionGranted
+                      ? Container(
+                    color: Colors.transparent,
+                  )
+                      : Container(
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    child: Text(
+                      'Scanner cannot work without CAMERA permission',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    color: Colors.black,
+                  ),
+                ],
+              )),
           Expanded(
             flex: 1,
             child: FittedBox(
@@ -73,7 +111,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                             }
                           },
                           child:
-                              Text(flashState, style: TextStyle(fontSize: 20)),
+                          Text(flashState, style: TextStyle(fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -94,7 +132,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                             }
                           },
                           child:
-                              Text(cameraState, style: TextStyle(fontSize: 20)),
+                          Text(cameraState, style: TextStyle(fontSize: 20)),
                         ),
                       )
                     ],
@@ -145,6 +183,10 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData;
+      });
+    }).onError((error) {
+      setState(() {
+        permissionGranted = error;
       });
     });
   }

@@ -38,6 +38,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         channel = MethodChannel(registrar.messenger(), "net.touchcapture.qr.flutterqr/qrview_$id")
         channel.setMethodCallHandler(this)
         checkAndRequestPermission(null)
+        channel.invokeMethod("Permission", hasCameraPermission());
         registrar.activity().application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPaused(p0: Activity?) {
                 if (p0 == registrar.activity()) {
