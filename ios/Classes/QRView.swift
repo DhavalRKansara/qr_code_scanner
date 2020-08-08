@@ -22,7 +22,7 @@ public class QRView:NSObject,FlutterPlatformView {
     
     func isCameraAvailable(success: Bool) -> Void {
         if success {
-            self.channel.invokeMethod("Permission", arguments: false)
+            self.channel.invokeMethod("Permission", arguments: true)
             do {
                 try scanner?.startScanning(resultBlock: { codes in
                     if let codes = codes {
